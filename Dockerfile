@@ -1,3 +1,8 @@
+#####################################################################################################
+# Purpose: Multiqc is often used in conjunction with zip to compress the multiqc report
+# The base biocontainer for multiqc does not include zip, thus this image extends by installing zip
+#####################################################################################################
+
 # Start with base multiqc from biocontainers
 FROM quay.io/biocontainers/multiqc:1.12--pyhdfd78af_0
 
