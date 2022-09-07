@@ -59,7 +59,7 @@ USER genuser
 # Install user level conda packages
 
 RUN conda install -c conda-forge mamba && \
-    mamba install -c conda-forge python==3.10 jupyter seaborn matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi
+    mamba install -c conda-forge python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi
 
 RUN chmod -R a+rwX /home/genuser
 
