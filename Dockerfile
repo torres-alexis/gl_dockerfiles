@@ -1,12 +1,29 @@
 #####################################################################################################
-# Purpose: Building the STAR index is parameterized with a genome size dependent 'genomeSAindexNbases' open
-# Upon building the STAR index if 'genomeSAindexNbases' is not ideally parameterized, STAR will suggest a better value
-# This image extends the base biocontainer to also include python with is used to dynamically run the index build and use the suggested value if the default
-# is not ideally set.
+# Purpose: A container of tools used to generate quarto reports 
+# - Software
+#   - python 3.10
+#   - quarto 1.1.189
+#   - python libraries
+#     - matplotlib
+#     - plotly
+#     - seaborn
+#     - scikit-learn
+#   - R
+#     - knitr
+#     - tidyverse
+#     - plotly
+# Known Issues:
+#   - Cannot use R rendering at this time due to this bug
+# processing file: test_r.qmd
+# Error in dyn.load(file, DLLpath = DLLpath, ...) : 
+#   unable to load shared object '/opt/conda/lib/R/library/stringi/libs/stringi.so':
+#   libicui18n.so.58: cannot open shared object file: No such file or directory
+# Calls: .main ... namespaceImport -> loadNamespace -> library.dynam -> dyn.load
+# Execution halted
 #####################################################################################################
 
 # Start with base multiqc from biocontainers
-FROM quay.io/biocontainers/star:2.7.10a--h9ee0642_0
+FROM ubuntu:bionic-20220902
 
 # Add zip to image
 # Zip is needed to zip multiqc reports
@@ -18,16 +35,33 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN groupadd -r genuser && \
     useradd -g genuser genuser && \
     mkdir /home/genuser && \
-    chmod -R 777 /home/genuser && \
+    chown -R genuser /home/genuser && \
     apt-get update
 
-RUN apt-get install software-properties-common -y && \
-    add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get install python3.10 -y && \
-    # ensure python3.10 is linked to python for shebang support
-    ln -s /usr/bin/python3.10 /usr/bin/python
+RUN apt-get install software-properties-common wget -y
+
+# Copy and install quarto
+COPY ./assets /tmp
+
+RUN dpkg -i /tmp/quarto-1.1.189-linux-amd64.deb
+
+# Install miniconda
+ENV CONDA_DIR /opt/conda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+     /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R a+rwX /opt/conda
+
+# Put conda in path so we can use conda activate
+ENV PATH=$CONDA_DIR/bin:$PATH
 
 # swith to user
 USER genuser
 
+# Install user level conda packages
+
+RUN conda install -c conda-forge mamba && \
+    mamba install -c conda-forge python==3.10 jupyter seaborn matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi
+
+RUN chmod -R a+rwX /home/genuser
+
 WORKDIR /home/genuser
+
