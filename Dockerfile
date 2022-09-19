@@ -40,11 +40,6 @@ RUN groupadd -r genuser && \
 
 RUN apt-get install software-properties-common wget -y
 
-# Copy and install quarto
-COPY ./assets /tmp
-
-RUN dpkg -i /tmp/quarto-1.1.189-linux-amd64.deb
-
 # Install miniconda
 ENV CONDA_DIR /opt/conda
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
@@ -59,7 +54,7 @@ USER genuser
 # Install user level conda packages
 
 RUN conda install -c conda-forge mamba && \
-    mamba install -c conda-forge python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi
+    mamba install -c conda-forge -c bioconda python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.1.2 bioconductor-deseq2=1.34.0 r-tidyverse==1.3.1 r-plotly r-knitr r-stringi r-irkernel
 
 RUN chmod -R a+rwX /home/genuser
 
