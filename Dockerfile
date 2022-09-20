@@ -31,19 +31,19 @@ FROM ubuntu:bionic-20220902
 # Ensure no user interaction is requested
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Copy and install quarto
+COPY ./assets /tmp
+
 # create group and user and install packages
 RUN groupadd -r genuser && \
     useradd -g genuser genuser && \
     mkdir /home/genuser && \
     chown -R genuser /home/genuser && \
-    apt-get update
-
-RUN apt-get install software-properties-common wget -y
-
-# Copy and install quarto
-COPY ./assets /tmp
-
-RUN dpkg -i /tmp/quarto-1.1.189-linux-amd64.deb
+    apt-get update && \
+    apt-get install --no-install-recommends software-properties-common wget git -y && \
+    dpkg -i /tmp/quarto-1.1.189-linux-amd64.deb && \
+    rm  /tmp/quarto-1.1.189-linux-amd64.deb && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install miniconda
 ENV CONDA_DIR /opt/conda
@@ -59,7 +59,8 @@ USER genuser
 # Install user level conda packages
 
 RUN conda install -c conda-forge mamba && \
-    mamba install -c conda-forge python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi
+    mamba install -c conda-forge python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi && \
+    Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
 
 RUN chmod -R a+rwX /home/genuser
 
