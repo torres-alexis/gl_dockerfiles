@@ -5,6 +5,9 @@ Dockerfiles created for my work at GeneLab
 
 Open this as a gitpod workspace using this [link](https://gitpod.io/#https://github.com/J-81/gl_dockerfiles/tree/gl_ercc_analysis_v2).
 
+All steps below must be run using the gitpod workspace terminal. 
+**NOTE** gitpod workspaces timeout after 30 minutes of inactivity. In those cases you will have to repeat this process (ideally you should avoid the timeout)!
+
 1. Install conda dependencies (using mamba to solve and install faster)
    ``` bash
    conda install -c conda-forge mamba -y
