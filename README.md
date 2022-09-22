@@ -3,6 +3,8 @@ Dockerfiles created for my work at GeneLab
 
 ## This branch also acts as a gitpod workspace for running the ERCC analysis as follows:
 
+Open this as a gitpod workspace using this [link](https://gitpod.io/#https://github.com/J-81/gl_dockerfiles/tree/gl_ercc_analysis_v2).
+
 1. Install conda dependencies (using mamba to solve and install faster)
    ``` bash
    conda install -c conda-forge mamba -y
