@@ -52,9 +52,10 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 USER genuser
 
 # Install user level conda packages
+COPY ./assets /tmp
 
 RUN conda install -c conda-forge mamba && \
-    mamba install -c conda-forge -c bioconda python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.1.2 bioconductor-deseq2=1.34.0 r-tidyverse==1.3.1 r-plotly r-knitr r-stringi r-irkernel
+    mamba env update --name base --file /tmp/conda.yaml  --prune 
 
 RUN chmod -R a+rwX /home/genuser
 
