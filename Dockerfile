@@ -32,17 +32,17 @@ FROM ubuntu:bionic-20220902
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Copy and install quarto
-COPY ./assets /tmp
+COPY ./assets /tmp/assets
 
 # create group and user and install packages
 RUN groupadd -r genuser && \
     useradd -g genuser genuser && \
     mkdir /home/genuser && \
-    chown -R genuser /home/genuser && \
+    chown -R genuser /home/genuser /tmp/assets && \
     apt-get update && \
     apt-get install --no-install-recommends software-properties-common wget git -y && \
-    dpkg -i /tmp/quarto-1.1.189-linux-amd64.deb && \
-    rm  /tmp/quarto-1.1.189-linux-amd64.deb && \
+    dpkg -i /tmp/assets/quarto-1.1.251-linux-amd64.deb && \
+    rm  /tmp/assets/quarto-1.1.251-linux-amd64.deb && \
     rm -rf /var/lib/apt/lists/*
 
 # Install miniconda
@@ -59,8 +59,10 @@ USER genuser
 # Install user level conda packages
 
 RUN conda install -c conda-forge mamba && \
-    mamba install -c conda-forge python==3.10 jupyter seaborn plotly matplotlib pandas scikit-learn statsmodels papermill r-base==4.2 r-tidyverse r-plotly r-knitr r-stringi && \
-    Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
+    mamba env update -n base -f /tmp/assets/NF_Affy.yml && \
+    # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
+    Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" && \ 
+    rm -r /tmp/assets
 
 RUN chmod -R a+rwX /home/genuser
 
