@@ -14,6 +14,9 @@ dependencies:
     - statsmodels 
     - papermill
     - r-base==4.1.2 
+    - r-dt
+    - r-downlit
+    - r-xml2
     - bioconductor-biomart
     - bioconductor-limma
     - bioconductor-oligo
