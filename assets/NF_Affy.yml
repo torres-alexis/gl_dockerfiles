@@ -25,3 +25,4 @@ dependencies:
     - r-knitr 
     - r-stringi
     - r-irkernel
+    - r-r.utils # Used to decompress gzip files
