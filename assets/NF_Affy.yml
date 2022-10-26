@@ -26,3 +26,4 @@ dependencies:
     - r-stringi
     - r-irkernel
     - r-r.utils # Used to decompress gzip files
+    - r-statmod # required for limma eBayes fit
