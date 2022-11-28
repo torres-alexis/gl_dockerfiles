@@ -1,16 +1,33 @@
-#####################################################################################################
-# Purpose: Multiqc is often used in conjunction with zip to compress the multiqc report
-# The base biocontainer for multiqc does not include zip, thus this image extends by installing zip
-#####################################################################################################
+# The build-stage image:
+FROM continuumio/miniconda3 AS build
 
-# Start with base multiqc from biocontainers
-FROM quay.io/biocontainers/trim-galore:0.6.7--hdfd78af_0
+# Install the package as normal:
+COPY environment.yml .
+RUN conda env create -f environment.yml
 
-# Add zip to image
-# Zip is needed to zip multiqc reports
+# Install conda-pack:
+RUN conda install -c conda-forge conda-pack
 
-# Ensure no user interaction is requested
-ARG DEBIAN_FRONTEND=noninteractive
+# Use conda-pack to create a standalone enviornment
+# in /venv:
+RUN conda-pack -n this_env -o /tmp/env.tar && \
+  mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
+  rm /tmp/env.tar
 
-# upgrade cutadapt to version 3.7
-RUN  pip install cutadapt==3.7
+# We've put venv in same path it'll be in final image,
+# so now fix up paths:
+RUN /venv/bin/conda-unpack
+
+
+# The runtime-stage image; we can use Debian as the
+# base image since the Conda env also includes Python
+# for us.
+FROM debian:buster AS runtime
+
+# Copy /venv from the previous stage:
+COPY --from=build /venv /venv
+
+# When image is run, run the code with the environment
+# activated:
+COPY entrypoint.sh ./
+ENTRYPOINT ["./entrypoint.sh"]
