@@ -29,5 +29,5 @@ COPY --from=build /venv /venv
 
 # When image is run, run the code with the environment
 # activated:
-COPY entrypoint.sh ./
-ENTRYPOINT ["./entrypoint.sh"]
+COPY entrypoint.sh /.entry/
+ENTRYPOINT ["/.entry/entrypoint.sh"]
