@@ -28,3 +28,4 @@ dependencies:
     - r-r.utils # Used to decompress gzip files
     - r-statmod # required for limma eBayes fit
     - r-venndiagram # Used for comparing DE sets
+    - r-kernsmooth # Req. for oligo::MAplot, used in Affymetrix processing
