@@ -14,4 +14,4 @@ source /venv/bin/activate
 set -euo pipefail
 
 # Run external command
-$@
+"$@"
