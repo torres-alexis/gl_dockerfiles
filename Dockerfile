@@ -32,7 +32,7 @@ FROM ubuntu:bionic-20220902
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Copy and install quarto
-COPY ./assets /tmp/assets
+COPY ./assets/quarto-1.2.313-linux-amd64.deb /tmp/assets/
 
 # create group and user and install packages
 RUN groupadd -r genuser && \
@@ -57,7 +57,7 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 USER genuser
 
 # Install user level conda packages
-
+COPY ./assets/NF_Affy.yml /tmp/assets/
 RUN conda install -c conda-forge mamba && \
     mamba env update -n base -f /tmp/assets/NF_Affy.yml && \
     # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
