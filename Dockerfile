@@ -30,7 +30,7 @@ RUN /venv/bin/conda-unpack
 FROM debian:buster AS runtime
 
 # install proc (for ps, needed by Nextflow)
-RUN apt-get update && apt-get install procps -y && apt-get clean
+RUN apt-get update && apt-get install procps unzip -y && apt-get clean
 
 # Copy /venv from the previous stage:
 COPY --from=build /venv /venv
