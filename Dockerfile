@@ -10,7 +10,11 @@ RUN conda env create -f environment.yml
 # Remove devtools after as only used to build env
 RUN conda run -n this_env Rscript -e "devtools::install_github('mikelove/tximport')" && conda uninstall -n this_env r-devtools
 
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install unzip -y
+
 # When image is run, run the code with the environment
 # activated:
 COPY entrypoint.sh /.entry/
+RUN chmod a+rx /.entry/entrypoint.sh
 ENTRYPOINT ["/.entry/entrypoint.sh"]
