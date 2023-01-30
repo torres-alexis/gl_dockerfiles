@@ -1,4 +1,3 @@
-name: this_env
 channels:
   - conda-forge
   - bioconda
