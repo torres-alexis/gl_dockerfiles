@@ -8,7 +8,6 @@ set -euo pipefail
 
 # Temporarily disable strict mode and activate conda:
 set +euo pipefail
-conda activate this_env
 
 # Re-enable strict mode:
 set -euo pipefail
