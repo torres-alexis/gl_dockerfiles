@@ -1,1 +1,2 @@
-image: nfcore/gitpod:latest
+image:
+  file: .gitpod.Dockerfile
