@@ -12,8 +12,6 @@ RUN sudo apt-get update && sudo apt-get install -y \
     git \
     cryptsetup-bin && sudo rm -rf /var/lib/apt/lists/*
 
-# create /workspace in container (this is also done by k8s at initiation), change owner to chown
-RUN sudo mkdir /workspace && sudo chown -R 33333:33333 /workspace
 
 # Install Singularity (Go is already installed)
 RUN wget https://github.com/sylabs/singularity/releases/download/v3.8.1/singularity-ce-3.8.1.tar.gz && \
