@@ -1,4 +1,4 @@
-#!/bin/bash --login
+#!/bin/bash
 # The --login ensures the bash configuration is loaded,
 # enabling Conda.
 
