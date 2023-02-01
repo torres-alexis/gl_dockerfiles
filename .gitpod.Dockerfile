@@ -28,6 +28,9 @@ RUN export PATH=$PATH:/usr/local/go/bin && \
     make -C ./builddir && \
     sudo make -C ./builddir install
     
-RUN cd && rm -rf singularity-ce-3.9.*    
+# Clean up and refine config
+RUN cd && rm -rf singularity-ce-3.9.* && \
+    sudo cat /usr/local/etc/singularity/singularity.conf | sed 's;mount proc = no;mount proc = yes;g' > /usr/local/etc/singularity/singularity.conf && \
+    echo "bind path = /proc" >> /usr/local/etc/singularity/singularity.conf
 
 RUN echo ". /usr/local/etc/bash_completion.d/singularity" >> ${HOME}/.bashrc
