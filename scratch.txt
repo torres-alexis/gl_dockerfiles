@@ -1,0 +1,1 @@
+singularity run docker://hello-world:latest
