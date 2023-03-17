@@ -32,7 +32,7 @@ FROM ubuntu:bionic-20220902
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Copy and install quarto
-COPY ./assets/quarto-1.2.313-linux-amd64.deb /tmp/assets/
+COPY ./assets/quarto-1.1.251-linux-amd64.deb /tmp/assets/
 
 # create group and user and install packages
 RUN groupadd -r genuser && \
@@ -41,8 +41,8 @@ RUN groupadd -r genuser && \
     chown -R genuser /home/genuser /tmp/assets && \
     apt-get update && \
     apt-get install --no-install-recommends software-properties-common wget git -y && \
-    dpkg -i /tmp/assets/quarto-1.2.313-linux-amd64.deb && \
-    rm  /tmp/assets/quarto-1.2.313-linux-amd64.deb && \
+    dpkg -i /tmp/assets/quarto-1.1.251-linux-amd64.deb && \
+    rm  /tmp/assets/quarto-1.1.251-linux-amd64.deb && \
     rm -rf /var/lib/apt/lists/*
 
 # Install miniconda
