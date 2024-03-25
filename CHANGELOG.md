@@ -1,6 +1,6 @@
 # Docker image change log
  
-## [NF_AffyMP-A_1.0.0-RC9](https://github.com/torres-alexis/gl_dockerfiles/releases/tag/NF_AffyMP-A_1.0.0-RC9)
+## [NF_MAAffymetrix_v1.0.0-rc.9](https://github.com/torres-alexis/gl_dockerfiles/releases/tag/NF_MAAffymetrix_v1.0.0-rc.9)
 - Switch from Bionic to Jammy for Ubuntu LTS OS base image
 - Software changelog
     - |Program|Previous version|Current version|
@@ -21,6 +21,8 @@
         |Quarto|1.1.251|1.4.551|
 - Remove Quarto installation file from local assets in favor of downloading Quarto from Github since old versions are consistently available
 - Reorganize Dockerfile
+- Changed label naming scheme to workflow_**vX.X.X[-rc-.X]**
+    - Cannot use direct label versioning which would be ideal, unless all images were hosted in their own repos. 
 
 \* Python and several Python and R packages have been updated but are omitted from the software list in [GL-DPPD-7114.md](https://github.com/nasa/GeneLab_Data_Processing/blob/master/Microarray/Affymetrix/Pipeline_GL-DPPD-7114_Versions/GL-DPPD-7114.md), as they are utilized for background processes.
 <br> 
