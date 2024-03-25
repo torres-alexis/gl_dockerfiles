@@ -1,8 +1,8 @@
 #####################################################################################################
 # Purpose: A container of tools used to generate quarto reports 
 # - Software
-#   - python 3.10
-#   - quarto 1.1.189
+#   - python 3.11
+#   - quarto 1.4.551
 #   - python libraries
 #     - matplotlib
 #     - plotly
@@ -22,49 +22,46 @@
 # Execution halted
 #####################################################################################################
 
-# Start with base multiqc from biocontainers
-FROM ubuntu:bionic-20220902
-
-# Add zip to image
-# Zip is needed to zip multiqc reports
+FROM ubuntu:jammy
 
 # Ensure no user interaction is requested
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Copy and install quarto
-COPY ./assets/quarto-1.1.251-linux-amd64.deb /tmp/assets/
-
-# create group and user and install packages
-RUN groupadd -r genuser && \
-    useradd -g genuser genuser && \
-    mkdir /home/genuser && \
-    chown -R genuser /home/genuser /tmp/assets && \
-    apt-get update && \
-    apt-get install --no-install-recommends software-properties-common wget git -y && \
-    dpkg -i /tmp/assets/quarto-1.1.251-linux-amd64.deb && \
-    rm  /tmp/assets/quarto-1.1.251-linux-amd64.deb && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install miniconda
+# Install conda
 ENV CONDA_DIR /opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-     /bin/bash ~/miniconda.sh -b -p /opt/conda && chmod -R a+rwX /opt/conda
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        git \
+        software-properties-common \
+    && wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh \
+    && /bin/bash ~/miniconda.sh -b -p $CONDA_DIR && chmod -R a+rwX $CONDA_DIR \
+    && rm -rf /var/lib/apt/lists/*
 
-# Put conda in path so we can use conda activate
+# Put conda in path
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-# swith to user
-USER genuser
+# Install Quarto
+ENV QUARTO_VERSION 1.4.551
+RUN wget "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb" -O /tmp/quarto.deb \
+    && dpkg -i /tmp/quarto.deb \
+    && rm /tmp/quarto.deb
 
-# Install user level conda packages
-COPY ./assets/NF_Affy.yml /tmp/assets/
-RUN conda install -c conda-forge mamba && \
-    mamba env update -n base -f /tmp/assets/NF_Affy.yml && \
+# Install conda packages
+COPY ./assets/NF_Affy.yml /tmp/
+RUN conda install -c conda-forge mamba \
+    && mamba env update -n base -f /tmp/NF_Affy.yml \
     # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
-    Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" && \ 
-    rm -r /tmp/assets
+    && Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" \ 
+    && rm /tmp/NF_Affy.yml
 
-RUN chmod -R a+rwX /home/genuser
+# Create group and user
+RUN groupadd -r genuser \
+    && useradd -g genuser genuser \
+    && mkdir /home/genuser \
+    && chown -R genuser /home/genuser \
+    && chmod -R a+rwX /home/genuser
 
+# Set user to genuser
+USER genuser
 WORKDIR /home/genuser
-
