@@ -19,7 +19,6 @@ dependencies:
     - r-xml2
     - bioconductor-biomart
     - bioconductor-limma
-    - bioconductor-oligo
     - r-tidyverse==2.0.0 
     - r-plotly 
     - r-knitr 

@@ -47,12 +47,18 @@ RUN wget "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_V
     && dpkg -i /tmp/quarto.deb \
     && rm /tmp/quarto.deb
 
+# Set locale for R
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+
 # Install conda packages
 COPY ./assets/NF_Affy.yml /tmp/
 RUN conda install -c conda-forge mamba \
     && mamba env update -n base -f /tmp/NF_Affy.yml \
     # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
     && Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" \ 
+    # This fixes Error in `rma.background.correct()`: \ ! ERROR; return code from pthread_create() is 22
+    && BiocManager::install("oligo", configure.args="--disable-threading", force = TRUE) \
     && rm /tmp/NF_Affy.yml
 
 # Create group and user
