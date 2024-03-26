@@ -17,8 +17,6 @@ dependencies:
     - r-dt
     - r-downlit
     - r-xml2
-    - bioconductor-biomart
-    - bioconductor-limma
     - r-tidyverse==2.0.0 
     - r-plotly 
     - r-knitr 
