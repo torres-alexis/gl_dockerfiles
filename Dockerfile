@@ -53,11 +53,12 @@ RUN conda install -c conda-forge mamba \
     && mamba env update -n base -f /tmp/NF_Affy.yml \
     # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
     && Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" \ 
-    # This fixes Error in `rma.background.correct()`: \ ! ERROR; return code from pthread_create() is 22
     && Rscript -e "install.packages(c('BiocManager', 'remotes'), repos='https://cloud.r-project.org')" \
-    && Rscript -e "BiocManager::install('oligo', configure.args='--disable-threading', force = TRUE)" \
+    && Rscript -e "BiocManager::install('oligo')" \
     && Rscript -e "BiocManager::install('biomaRt')" \
     && Rscript -e "BiocManager::install('limma')" \
+    # This fixes Error in `rma.background.correct()`: \ ! ERROR; return code from pthread_create() is 22
+    && Rscript -e "BiocManager::install('preprocessCore', configure.args='--disable-threading', force = TRUE)" \
     && rm /tmp/NF_Affy.yml
 
 # Create group and user
