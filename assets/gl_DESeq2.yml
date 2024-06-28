@@ -1,16 +1,7 @@
 channels:
     - conda-forge
     - bioconda
+    - r
+    - defaults
 dependencies:
-    - r-base==4.4.1
-    - bioconductor-deseq2
-    - bioconductor-tximport
-    - r-tidyverse=2.0.0
-    - r-optparse=1.7.5
-    - r-cli=3.6.3
-    - r-here=1.0.1
-    - r-knitr=1.47
-    - r-tibble=3.2.1
-    - r-stringr=1.5.1
-    - r-dt
-    - r-devtools # used for building, remove in final container
+    - r-base=4.4.0

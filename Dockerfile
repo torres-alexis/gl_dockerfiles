@@ -6,6 +6,15 @@
     RUN conda install -c conda-forge mamba \
         && mamba env update -n base -f /tmp/gl_DESeq2.yml \
         && Rscript -e "install.packages(c('BiocManager', 'remotes'), repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('knitr', repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('tidyverse', repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('optparse', repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('here', repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('cli', repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('tibble', repos='https://cloud.r-project.org')" \
+        && Rscript -e "install.packages('dt', repos='https://cloud.r-project.org')" \
+        && Rscript -e "BiocManager::install('DESeq2')" \
+        && Rscript -e "BiocManager::install('tximport')" \
         && rm /tmp/gl_DESeq2.yml
     
     ARG DEBIAN_FRONTEND=noninteractive
