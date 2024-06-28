@@ -1,20 +1,18 @@
 # The build-stage image:
-FROM continuumio/miniconda3 AS build
+    FROM continuumio/miniconda3 AS build
 
-# Install the package as normal:
-COPY environment.yml .
-RUN conda env update --name base -f environment.yml
-
-# Install tximport 1.27.1 from github 
-# (as per github, commit: https://github.com/mikelove/tximport/commit/66bc7bb06fcafad376194ed065b8ce438080e505 on 1/11/2023)
-# Remove devtools after as only used to build env
-RUN Rscript -e "devtools::install_github('mikelove/tximport', ref='66bc7bb06fcafad376194ed065b8ce438080e505')" && conda uninstall r-devtools
-
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install unzip -y
-
-# When image is run, run the code with the environment
-# activated:
-COPY entrypoint.sh /.entry/
-RUN chmod a+rx /.entry/entrypoint.sh
-ENTRYPOINT ["/.entry/entrypoint.sh"]
+    # Install conda packages
+    COPY ./assets/gl_DESeq2.yml /tmp/
+    RUN conda install -c conda-forge mamba \
+        && mamba env update -n base -f /tmp/gl_DESeq2.yml \
+        && Rscript -e "install.packages(c('BiocManager', 'remotes'), repos='https://cloud.r-project.org')" \
+        && rm /tmp/gl_DESeq2.yml
+    
+    ARG DEBIAN_FRONTEND=noninteractive
+    RUN apt-get update && apt-get install unzip -y
+    
+    # When image is run, run the code with the environment
+    # activated:
+    COPY entrypoint.sh /.entry/
+    RUN chmod a+rx /.entry/entrypoint.sh
+    ENTRYPOINT ["/.entry/entrypoint.sh"]
