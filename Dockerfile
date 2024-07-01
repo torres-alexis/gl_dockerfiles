@@ -4,18 +4,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     pandoc \
-    && rm -rf /var/lib/apt/lists/* \
-    && Rscript -e "install.packages(c('BiocManager', 'remotes'), repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('knitr', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('tidyverse', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('optparse', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('here', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('cli', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('tibble', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages('DT', repos='https://cloud.r-project.org')" \
-    && Rscript -e "BiocManager::install('DESeq2')" \
-    && Rscript -e "BiocManager::install('tximport')"
+    && rm -rf /var/lib/apt/lists/*
+
 COPY ./assets/install_pandoc.sh /tmp/
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
       wget \
@@ -26,4 +18,14 @@ RUN apt-get update \
       perl && \
       /tmp/install_pandoc.sh && \
       install2.r rmarkdown \
+      BiocManager \
+      knitr \
+      tidyverse \
+      optparse \
+      here \
+      cli \
+      tibble \
+      DT \
     && rm /tmp/install_pandoc.sh
+
+RUN R -e "BiocManager::install(c('DESeq2', 'tximport'))"
