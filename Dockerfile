@@ -1,4 +1,4 @@
-FROM r-base:4.4.0
+FROM bioconductor/bioconductor_docker:RELEASE_3_19
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -15,10 +15,9 @@ RUN apt-get update \
       texlive-latex-extra \
       lmodern \
       procps \
-      perl && \
-      /tmp/install_pandoc.sh && \
-      install2.r rmarkdown \
-      BiocManager \
+      perl \
+      && /tmp/install_pandoc.sh \
+      && install2.r rmarkdown \
       knitr \
       tidyverse \
       optparse \
