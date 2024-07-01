@@ -4,7 +4,7 @@
 #####################################################################################################
 
 # Start with base multiqc from biocontainers
-FROM quay.io/biocontainers/trim-galore:0.6.7--hdfd78af_0
+FROM quay.io/biocontainers/trim-galore:0.6.10--hdfd78af_0
 
 # Add zip to image
 # Zip is needed to zip multiqc reports
@@ -13,4 +13,4 @@ FROM quay.io/biocontainers/trim-galore:0.6.7--hdfd78af_0
 ARG DEBIAN_FRONTEND=noninteractive
 
 # upgrade cutadapt to version 3.7
-RUN  pip install cutadapt==3.7
+RUN  pip install cutadapt==4.9
