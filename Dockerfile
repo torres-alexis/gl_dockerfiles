@@ -22,6 +22,7 @@ RUN apt-get update \
       graphviz \
       texlive-latex-extra \
       lmodern \
+      procps \
       perl && \
       /tmp/install_pandoc.sh && \
       install2.r rmarkdown \
