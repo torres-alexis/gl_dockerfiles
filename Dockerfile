@@ -4,7 +4,7 @@
 #####################################################################################################
 
 # Start with base multiqc from biocontainers
-FROM quay.io/biocontainers/multiqc:1.12--pyhdfd78af_0
+FROM quay.io/biocontainers/multiqc:1.22.3--pyhdfd78af_0
 
 # Add zip to image
 # Zip is needed to zip multiqc reports
