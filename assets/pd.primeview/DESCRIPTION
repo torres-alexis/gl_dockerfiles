@@ -1,0 +1,19 @@
+Package: pd.primeview
+Title: Platform Design Info for The Manufacturer's Name PrimeView
+Description: Platform Design Info for The Manufacturer's Name PrimeView
+Version: 0.0.1
+Author: Alexis Torres
+Maintainer: Alexis Torres <alexis.torres@nasa.gov>
+LazyLoad: yes
+Depends: R (>= 3.2.0),
+	 Biostrings (>= 2.35.12),
+         methods,
+         RSQLite (>= 1.0.0),
+         oligoClasses (>= 1.29.6),
+         oligo (>= 1.31.5),
+         DBI (>= 0.3.1),
+         IRanges (>= 2.1.43),
+         S4Vectors (>= 0.5.22)
+License: Artistic-2.0
+biocViews: AnnotationData, oligo
+ZipData: no

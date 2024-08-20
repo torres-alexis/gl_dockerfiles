@@ -1,0 +1,7 @@
+import(DBI)
+import(RSQLite)
+export(
+       'pd.primeview'
+       )
+importFrom("Biostrings", "DNAStringSet")
+importFrom("S4Vectors", "DataFrame")
