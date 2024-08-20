@@ -49,6 +49,8 @@ RUN wget "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_V
 
 # Install conda packages
 COPY ./assets/NF_Affy.yml /tmp/
+COPY ./assets/pd.primeview /tmp/assets/
+
 RUN conda install -c conda-forge mamba \
     && mamba env update -n base -f /tmp/NF_Affy.yml \
     # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
@@ -59,7 +61,9 @@ RUN conda install -c conda-forge mamba \
     && Rscript -e "BiocManager::install('limma')" \
     # This fixes Error in `rma.background.correct()`: \ ! ERROR; return code from pthread_create() is 22
     && Rscript -e "BiocManager::install('preprocessCore', configure.args='--disable-threading', force = TRUE)" \
-    && rm /tmp/NF_Affy.yml
+    && Rscript -e 'install.packages("/tmp/assets/pd.primeview/", repos = NULL, type = "source")' \
+    && rm /tmp/NF_Affy.yml \
+    && rm -rf /tmp/assets/pd.primeview
 
 # Create group and user
 RUN groupadd -r genuser \
