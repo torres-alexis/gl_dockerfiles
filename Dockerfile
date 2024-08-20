@@ -56,17 +56,19 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 # Switch to user
 USER genuser
 
-COPY ./assets/primeview_annotation.R /tmp/assets/
+
 COPY ./assets/NF_Affy.yml /tmp/assets/
-COPY ./assets/PrimeView.na36.annot.csv /tmp/assets/
+COPY ./assets/pd.primeview /tmp/assets/
 
 # Install user level conda packages, PrimeView annotation package
 RUN conda install -c conda-forge mamba && \
     mamba env update -n base -f /tmp/assets/NF_Affy.yml && \
     # Fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
     Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" && \
-    Rscript -e "install.packages("pd.primeview/", repos = NULL, type = "source")", 
-    rm -r /tmp/assets/NF_Affy.yml
+    Rscript -e 'install.packages("/tmp/assets/pd.primeview/", repos = NULL, type = "source")' && \
+    rm -r /tmp/assets/NF_Affy.yml && \
+    rm -rf /tmp/assets/pd.primeview
+
 
 
 # Set permissions
