@@ -1,7 +1,7 @@
-FROM public.ecr.aws/smce/smce-images:smce-oss-earth-base-f3f0ad36
+FROM jupyter/base-notebook
 
-# 10/17/2024
 LABEL maintainer="alexis.torres@nasa.gov"
+ENV TZ=America/Los_Angeles
 
 # Install OS packages and clean up
 USER root
@@ -9,6 +9,7 @@ RUN apt-get update \
     && apt-get install -y \
     curl \
     git \
+    bsdmainutils \
     && apt-get clean \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
@@ -20,7 +21,13 @@ RUN mamba env create -f /tmp/environment.yml \
     && rm -rf /tmp/environment.yml \
     && mamba clean -a -y
 
-# Enable Jupyter extensions
+# Enable Jupyter extensions 
 RUN /bin/bash -c "source activate gl4u_intro_2024 \
     && jupyter contrib nbextension install --user \
     && jupyter nbextensions_configurator enable --user"
+
+# Clone the repository
+RUN git clone --single-branch --branch GL4U_Intro_2024 https://github.com/nasa/GeneLab-Training.git 
+
+# Set the default environment to gl4u_intro_2024
+RUN echo "conda activate gl4u_intro_2024" >> ~/.bashrc
