@@ -26,11 +26,12 @@ RUN /bin/bash -c "source activate gl4u_rnaseq_2024 \
     && jupyter contrib nbextension install --user \
     && jupyter nbextensions_configurator enable --user"
 
-# Copy the download_file_urls.py script
-COPY --chown=1000:1000 download_file_urls.py /home/jovyan/
+# Copy local files to the work directory
+COPY --chown=1000:1000 download_file_urls.py /home/jovyan/work/
+COPY --chown=1000:1000 RNAseq_DGE_JN_anyGLDS.ipynb /home/jovyan/work/
 
-# Copy the RNAseq_DGE_JN_anyGLDS_02-2023 1.ipynb notebook
-COPY --chown=1000:1000 RNAseq_DGE_JN_anyGLDS.ipynb /home/jovyan/
+# Set the working directory
+WORKDIR /home/jovyan/work
 
 # Set the default environment to gl4u_rnaseq_2024
 RUN echo "conda activate gl4u_rnaseq_2024" >> ~/.bashrc
