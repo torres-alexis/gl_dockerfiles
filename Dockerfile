@@ -38,3 +38,4 @@ RUN echo "conda activate gl4u_intro_2024" >> ~/.bashrc
 
 # Set the working directory to /workspace
 WORKDIR /workspace
+CMD ["/bin/bash"]

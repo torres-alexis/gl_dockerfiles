@@ -2,12 +2,12 @@
 
 1. Pull the Docker image:
    ```
-   docker pull quay.io/nasa_genelab/gl4u:GL4U_Intro_2024_SMCE
+   docker pull quay.io/nasa_genelab/gl4u-intro-2024:1.0.0
    ```
 
 2. Run the Docker container and expose port 8888:
    ```
-   docker run -p 8888:8888 quay.io/nasa_genelab/gl4u:GL4U_Intro_2024_SMCE
+   docker run -it -p 8888:8888 quay.io/nasa_genelab/gl4u-intro-2024:1.0.0
    ```
 
 3. Once the container is running, you should see a terminal prompt with the conda environment activated, like this:
