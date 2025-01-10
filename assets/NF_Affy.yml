@@ -13,20 +13,20 @@ dependencies:
     - scikit-learn 
     - statsmodels 
     - papermill
-    - r-base==4.1.3
-    - r-dt
+    - r-base==4.4.2
+    - r-dplyr==1.1.4
     - r-downlit
+    - r-glue==1.8.0
     - r-xml2
-    - bioconductor-biomart
-    - bioconductor-limma
-    - bioconductor-oligo
-    - r-tidyverse==1.3.1 
+    - bioconductor-biomart==2.62.0
+    - bioconductor-limma==3.62.1
+    - bioconductor-oligo==1.70.0
     - r-plotly 
     - r-knitr 
     - r-stringi
     - r-irkernel
     - r-r.utils # Used to decompress gzip files
-    - r-statmod # required for limma eBayes fit
+    - r-statmod==1.5.0 # required for limma eBayes fit
     - r-venndiagram # Used for comparing DE sets
-    - r-matrixstats # Used for vector based standard deviation calculation
+    - r-matrixstats==1.5.0 # Used for vector based standard deviation calculation
     - r-kernsmooth # Req. for oligo::MAplot, used in Affymetrix processing
