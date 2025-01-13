@@ -65,8 +65,11 @@ ENV MAMBA_ROOT_PREFIX=/opt/conda
 COPY ./assets/NF_Affy.yml /tmp/assets/
 RUN mamba env update -n base -f /tmp/assets/NF_Affy.yml
 
-# Install R packages
+# Install CRAN packages
 RUN Rscript -e 'install.packages(c("stringi", "DT", "stringr"), repos="https://cloud.r-project.org")'
+
+# Install preprocessCore and disable threading
+RUN Rscript -e 'BiocManager::install("preprocessCore", configure.args="--disable-threading", force = TRUE)'
 
 # Cleanup
 RUN rm -r /tmp/assets
