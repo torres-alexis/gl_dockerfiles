@@ -68,9 +68,12 @@ RUN mamba env update -n base -f /tmp/assets/NF_Affy.yml
 # Install CRAN packages
 RUN Rscript -e 'install.packages(c("stringi", "DT", "stringr"), repos="https://cloud.r-project.org")'
 
+# Debugging
 # Install preprocessCore and disable threading
 RUN Rscript -e 'BiocManager::install("preprocessCore", configure.args="--disable-threading", force = TRUE)'
-
+# install older libopenblas through conda
+# https://stackoverflow.com/questions/61629861/error-return-code-from-pthread-create-is-22
+RUN mamba install -n base libopenblas=0.3.3
 # Cleanup
 RUN rm -r /tmp/assets
 
