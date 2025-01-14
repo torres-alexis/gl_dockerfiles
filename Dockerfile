@@ -1,25 +1,21 @@
-FROM r-base:4.4.2
+# Use the official Ubuntu 22.04 as the base image
+FROM ubuntu:22.04
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    libcurl4-openssl-dev \
-    pandoc \
+# Set non-interactive mode for apt-get
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install essential system packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
     wget \
-    graphviz \
+    perl \
+    procps \
+    pandoc \
     texlive-latex-extra \
     lmodern \
-    procps \
-    perl \
-    python3 \
-    python3-pip \
-    python3-pandas \
-    python3-seaborn \
-    python3-matplotlib \
-    python3-notebook \
-    python3-numpy \
-    python3-scipy \
-    # Dependencies for tidyverse based on errors
+    graphviz \
+    libssl-dev \
     libfontconfig1-dev \
     libxml2-dev \
     libharfbuzz-dev \
@@ -28,15 +24,29 @@ RUN apt-get update \
     libpng-dev \
     libtiff5-dev \
     libjpeg-dev \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./assets/install_pandoc.sh /tmp/
+# Install Miniconda
+ENV CONDA_DIR /opt/conda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+     chmod -R a+rwX /opt/conda
 
-RUN /tmp/install_pandoc.sh && \
-    rm /tmp/install_pandoc.sh
+# Add Conda to PATH
+ENV PATH=$CONDA_DIR/bin:$PATH
 
-# Install R packages 
-RUN R -e 'install.packages(c("rmarkdown", \
+# Copy the updated env.yml into the Docker image
+COPY ./assets/env.yml /tmp/assets/
+
+# Install Mamba for faster package management and update the Conda environment
+RUN conda install -c conda-forge mamba && \
+    mamba env update -n base -f /tmp/assets/env.yml && \
+    rm -r /tmp/assets
+
+# Install R packages using BiocManager within the Conda environment
+RUN R -e 'options(repos = c(CRAN = "https://cloud.r-project.org/")); \
+          install.packages(c("rmarkdown", \
                             "knitr", \
                             "tidyverse", \
                             "optparse", \
@@ -45,5 +55,16 @@ RUN R -e 'install.packages(c("rmarkdown", \
                             "tibble", \
                             "DT", \
                             "BiocManager"), \
-                            repos="https://cloud.r-project.org/")' && \
-    R -e 'BiocManager::install(c("DESeq2", "tximport"))'
+                            dependencies=TRUE)' && \
+    R -e 'options(repos = c(CRAN = "https://cloud.r-project.org/")); \
+          BiocManager::install(c("DESeq2", "tximport"), update=FALSE, ask=FALSE)'
+
+# Install Python packages
+RUN pip install --no-cache-dir \
+    jupyterlab \
+    notebook \
+    pandas \
+    seaborn \
+    matplotlib \
+    numpy \
+    scipy
