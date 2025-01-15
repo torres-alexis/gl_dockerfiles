@@ -61,24 +61,19 @@ RUN groupadd -r genuser && \
 RUN conda install -c conda-forge mamba
 ENV MAMBA_ROOT_PREFIX=/opt/conda
 
-# Update environment with yml file
-COPY ./assets/NF_Affy.yml /tmp/assets/
-RUN mamba env update -n base -f /tmp/assets/NF_Affy.yml
+# Install conda packages
+COPY ./assets/NF_Affy.yml /tmp/
 
-# Install CRAN packages
-RUN Rscript -e 'install.packages(c("stringi", "DT", "stringr"), repos="https://cloud.r-project.org")'
+RUN conda install -c conda-forge mamba \
+    && mamba env update -n base -f /tmp/NF_Affy.yml \
+    # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
+    && Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" \
+    && Rscript -e "install.packages(c('BiocManager', 'remotes', 'DT'), repos='https://cloud.r-project.org')" \
+    && Rscript -e "BiocManager::install('oligo')" \
+    && Rscript -e "BiocManager::install('biomaRt')" \
+    && Rscript -e "BiocManager::install('limma')" \
+    && Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading'))" \
+    && rm /tmp/NF_Affy.yml
 
-# Debugging
-# Install preprocessCore and disable threading
-RUN Rscript -e 'BiocManager::install("preprocessCore", configure.args="--disable-threading", force = TRUE)'
-# install older libopenblas through conda
-# https://stackoverflow.com/questions/61629861/error-return-code-from-pthread-create-is-22
-RUN mamba install -n base libopenblas=0.3.3
-# Cleanup
-RUN rm -r /tmp/assets
-
-RUN chmod -R a+rwX /home/genuser
-
-# Switch to user
+# Set user to genuser
 USER genuser
-WORKDIR /home/genuser
