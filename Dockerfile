@@ -69,10 +69,10 @@ RUN conda install -c conda-forge mamba \
     # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
     && Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" \
     && Rscript -e "install.packages(c('BiocManager', 'remotes', 'DT'), repos='https://cloud.r-project.org')" \
+    && Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading'))" \
     && Rscript -e "BiocManager::install('oligo')" \
     && Rscript -e "BiocManager::install('biomaRt')" \
     && Rscript -e "BiocManager::install('limma')" \
-    && Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading'))" \
     && rm /tmp/NF_Affy.yml
 
 # Set user to genuser
