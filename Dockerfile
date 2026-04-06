@@ -1,8 +1,8 @@
 #####################################################################################################
 # Purpose: A container of tools used to generate quarto reports 
 # - Software
-#   - python 3.10
-#   - quarto 1.6.40
+#   - python 3.12
+#   - quarto 1.9.36
 #   - python libraries
 #     - matplotlib
 #     - plotly
@@ -22,58 +22,41 @@
 # Execution halted
 #####################################################################################################
 
-# Start with base multiqc from biocontainers
-FROM ubuntu:bionic-20220902
+FROM mambaorg/micromamba:2.0-ubuntu22.04
 
-# Add zip to image
-# Zip is needed to zip multiqc reports
-
-# Ensure no user interaction is requested
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install conda
-ENV CONDA_DIR /opt/conda
+# Install system dependencies and Quarto as root
+USER root
+ENV QUARTO_VERSION=1.9.36
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         wget \
         git \
         software-properties-common \
-    && wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh \
-    && /bin/bash ~/miniconda.sh -b -p $CONDA_DIR && chmod -R a+rwX $CONDA_DIR \
+    && wget "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb" -O /tmp/quarto.deb \
+    && dpkg -i /tmp/quarto.deb \
+    && rm /tmp/quarto.deb \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Quarto
-ENV QUARTO_VERSION 1.6.40
-RUN wget "https://github.com/quarto-dev/quarto-cli/releases/download/v${QUARTO_VERSION}/quarto-${QUARTO_VERSION}-linux-amd64.deb" -O /tmp/quarto.deb \
-    && dpkg -i /tmp/quarto.deb \
-    && rm /tmp/quarto.deb
+# Switch to micromamba user for conda operations
+USER $MAMBA_USER
+COPY --chown=$MAMBA_USER:$MAMBA_USER ./assets/NF_Affy.yml /tmp/NF_Affy.yml
 
-# Put conda in path so we can use conda activate
-ENV PATH=$CONDA_DIR/bin:$PATH
+# Install conda packages into base environment
+RUN micromamba install -y -n base -f /tmp/NF_Affy.yml && \
+    micromamba clean --all --yes
 
-# Create user
-RUN groupadd -r genuser && \
-    useradd -r -g genuser genuser && \
-    mkdir /home/genuser && \
-    chown -R genuser:genuser /home/genuser
+ENV PATH="/opt/conda/bin:$PATH"
 
-# Install mamba
-RUN conda install -c conda-forge mamba
-ENV MAMBA_ROOT_PREFIX=/opt/conda
+# Rscript installs
+RUN Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')"
+RUN Rscript -e "install.packages(c('BiocManager', 'remotes', 'DT'), repos='https://cloud.r-project.org')"
+RUN Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading', force = TRUE))"
+RUN Rscript -e "BiocManager::install('oligo', configure.args = c(oligo = '--disable-threading', force = TRUE))"
+RUN Rscript -e "BiocManager::install('biomaRt')"
+RUN Rscript -e "BiocManager::install('limma')"
 
-# Install conda packages
-COPY ./assets/NF_Affy.yml /tmp/
+RUN rm /tmp/NF_Affy.yml
 
-RUN conda install -c conda-forge mamba \
-    && mamba env update -n base -f /tmp/NF_Affy.yml \
-    # This fixes the issue: 'libicui18n.so.58: cannot open shared object file: No such file or directory'
-    && Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')" \
-    && Rscript -e "install.packages(c('BiocManager', 'remotes', 'DT'), repos='https://cloud.r-project.org')" \
-    && Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading', force = TRUE))" \
-    && Rscript -e "BiocManager::install('oligo', configure.args = c(oligo = '--disable-threading', force = TRUE))" \
-    && Rscript -e "BiocManager::install('biomaRt')" \
-    && Rscript -e "BiocManager::install('limma')" \
-    && rm /tmp/NF_Affy.yml
-
-# Set user to genuser
-USER genuser
+CMD ["/bin/bash"]
