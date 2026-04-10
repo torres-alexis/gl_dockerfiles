@@ -21,7 +21,6 @@ dependencies:
     - bioconductor-oligo==1.74.0
     - r-plotly 
     - r-knitr 
-    - r-stringi
     - r-irkernel
     - r-r.utils # Used to decompress gzip files
     - r-statmod==1.5.1 # required for limma eBayes fit

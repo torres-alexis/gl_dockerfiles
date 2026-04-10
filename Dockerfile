@@ -52,10 +52,10 @@ ENV PATH="/opt/conda/bin:$PATH"
 # Rscript installs
 RUN Rscript -e "install.packages('stringi', repos='https://cloud.r-project.org')"
 RUN Rscript -e "install.packages(c('BiocManager', 'remotes', 'DT'), repos='https://cloud.r-project.org')"
-RUN Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading', force = TRUE))"
-RUN Rscript -e "BiocManager::install('oligo', configure.args = c(oligo = '--disable-threading', force = TRUE))"
-RUN Rscript -e "BiocManager::install('biomaRt')"
-RUN Rscript -e "BiocManager::install('limma')"
+RUN Rscript -e "BiocManager::install('preprocessCore', configure.args = c(preprocessCore = '--disable-threading'), force = TRUE)"
+
+# Explicitly remove conda cached preprocessCore to prevent it overriding the recompiled version
+RUN rm -rf /opt/conda/pkgs/bioconductor-preprocesscore-*/
 
 RUN rm /tmp/NF_Affy.yml
 
