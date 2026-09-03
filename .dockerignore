@@ -1,0 +1,6 @@
+.git
+.gitignore
+.gitpod.yml
+README.md
+*~
+*.md
