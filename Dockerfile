@@ -30,4 +30,7 @@ RUN mamba env update -n base -f /tmp/env.yml \
     && mamba clean -afy \
     && chmod -R a+rwX ${CONDA_DIR}
 
+COPY ./assets/cms_095046.txt /opt/ercc/cms_095046.txt
+ENV ERCC_TABLE=/opt/ercc/cms_095046.txt
+
 WORKDIR /opt
