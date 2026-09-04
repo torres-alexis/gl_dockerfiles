@@ -10,7 +10,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 ENV CONDA_DIR=/opt/conda
-RUN wget --quiet https://github.com/conda-forge/miniforge/releases/download/24.11.2-1/Miniforge3-24.11.2-1-Linux-x86_64.sh -O /tmp/miniforge.sh \
+ARG TARGETARCH
+RUN case "${TARGETARCH}" in \
+      amd64) MF_ARCH=x86_64 ;; \
+      arm64) MF_ARCH=aarch64 ;; \
+      *) echo "unsupported arch: ${TARGETARCH}" >&2; exit 1 ;; \
+    esac \
+    && wget --quiet "https://github.com/conda-forge/miniforge/releases/download/24.11.2-1/Miniforge3-24.11.2-1-Linux-${MF_ARCH}.sh" -O /tmp/miniforge.sh \
     && /bin/bash /tmp/miniforge.sh -b -p ${CONDA_DIR} \
     && rm /tmp/miniforge.sh \
     && chmod -R a+rwX ${CONDA_DIR}
